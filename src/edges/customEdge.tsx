@@ -15,7 +15,6 @@ import {
     style,
     interactionWidth,
   }: EdgeProps) {
-    console.log(sourceX,sourceY,targetX,targetY)
     const [edgePath] = getBezierPath({
         sourceX,
         sourceY,
@@ -24,9 +23,6 @@ import {
       });
     return (
       <>
-        {/* Arrow marker definition */}
-
-  
         <BaseEdge
          id={id}
          path={edgePath}

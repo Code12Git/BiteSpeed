@@ -1,5 +1,5 @@
 import type { NodePayload } from "../../types";
-import { ADD_NODE, IS_NODE_CLICKED, UPDATE_NODE } from "../actionType/actionTypes";
+import { ADD_EDGE, ADD_NODE, IS_NODE_CLICKED, UPDATE_NODE } from "../actionType/actionTypes";
 
 const nodeState = {
   nodesData: [
@@ -22,6 +22,7 @@ const nodesReducer = (
           ? { ...node, isClicked: !node.isClicked }
           : { ...node, isClicked: false }
       );
+      // We need to update the isClicked property of the node with the given id
       return {
         ...state,
         nodesData: updatedNodes,
@@ -30,6 +31,7 @@ const nodesReducer = (
 
     case ADD_NODE: {
       const { payload } = action;
+      // We need to add the new node to the nodesData array
       return {
         ...state,
         nodesData: [...state.nodesData, payload],
@@ -38,18 +40,22 @@ const nodesReducer = (
 
     case UPDATE_NODE: {
       const { text, id } = action.payload;
-      const updatedNodes = state.nodesData.map((node) =>
-        node.id === id
-          ? { ...node, data: { ...node.data, text } }
-          : node
-      );
+      // We need to update the node data with the new text we are spreading the existing node data and updating the text property
+      const updatedNodes = state.nodesData.map(node=>  node.id === id ? {...node,data:{...node.data,text}} : node )
       return {
         ...state,
         nodesData: updatedNodes,
-        edgesData: [...state.edgesData], // keep edges unchanged
+        edgesData: [...state.edgesData],
       };
     }
     
+    case ADD_EDGE: {
+      // We need to add the new edge to the edgesData array
+      return {
+        ...state,
+        edgesData: [...state.edgesData, action.payload],
+      };
+    }
     
 
     default:
