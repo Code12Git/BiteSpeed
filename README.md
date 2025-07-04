@@ -99,8 +99,8 @@ This ensures the flow has a single valid entry point.
 ## 💻 Running Locally
 
 ```bash
-git clone https://github.com/your-username/bitespeed-chatbot-flow.git
-cd bitespeed-chatbot-flow
+git clone https://github.com/Code12Git/BiteSpeed
+cd client
 npm install
 npm run dev
 ```
