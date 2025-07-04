@@ -1,0 +1,1 @@
+export const IS_NODE_CLICKED = "IS_NODE_CLICKED"

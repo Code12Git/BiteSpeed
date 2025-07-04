@@ -11,11 +11,24 @@ export interface NodeState {
     position?: { x: number; y: number };
     type?: string;
     data?: unknown;
-    originalNodeId?:string;
-    hours?: number;
-    minutes?: number;
-      subject?: string;
-      recipient?: string;
-      body?:string;
   }
+  
+  export type NodeProps = {
+    data: {
+      text:string
+    };
+    dragging: boolean;
+    id: string;
+    isClicked: boolean;
+    measured: {
+      width:256,
+      height:82
+    },
+    position: {
+      x:number,
+      y:number
+    },
+    selected: boolean;
+    type: "messageNode";
+  };
   

@@ -16,7 +16,7 @@ import {
     interactionWidth,
   }: EdgeProps) {
     console.log(sourceX,sourceY,targetX,targetY)
-    const [edgePath, labelX, labelY] = getBezierPath({
+    const [edgePath] = getBezierPath({
         sourceX,
         sourceY,
         targetX,
