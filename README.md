@@ -77,7 +77,7 @@ src/
 │ └── customEdge.tsx # Edge customization
 ├── redux/
 │   ├── action/ # Action creators (addNode, updateNode, etc.)
-│   ├── actionType/ # Action type constants (e.g.     ADD_NODE, ADD_EDGE)
+│   ├── actionType/ # Action type constants (e.g. ADD_NODE, ADD_EDGE)
 │   ├── reducer/ # Nodes reducer logic
 │   └── store.ts 
 ├── App.tsx # Main component
