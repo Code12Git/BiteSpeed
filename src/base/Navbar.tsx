@@ -1,12 +1,29 @@
+import type { Node } from '@xyflow/react';
+import toast from 'react-hot-toast'
 interface NavbarProps {
-  onSaveFlow: (text: string, id: string) => void;
+  onSaveFlow: () => void;
+  nodes:Node[];
+  nodesWithoutTarget:Node[];
 }
 
-const Navbar = ({ onSaveFlow }: NavbarProps) => {
+const Navbar = ({ onSaveFlow,nodes,nodesWithoutTarget }: NavbarProps) => {
   const handleClick = () => {
-    onSaveFlow("Updated text from Navbar", "1"); 
+    
+    // Case 1:When there are no nodes at all
+    if (nodes.length === 0) {
+      toast.error("Cannot save empty flow!");
+      return;
+    }
+    // Case 2: Multiple nodes with multiple unconnected targets
+    if (nodes.length > 1 && nodesWithoutTarget.length > 1) {
+      toast.error(`Cannot save flow. Multiple nodes are unconnected!`);
+      return;
+    }
+  
+    // All other cases are valid
+    onSaveFlow();
+    toast.success("Flow saved successfully!");
   };
-
   return (
     <div className="p-2 bg-gray-100 flex justify-end">
       <button 

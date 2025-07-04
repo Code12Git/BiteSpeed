@@ -16,7 +16,7 @@ type Props = {
 
 const MessageNode = ({ id, data }: Props) => {
   const dispatch = useAppDispatch();
-  const [isNodeClicked, setIsNodeClicked] = useState(false);
+  const [, setIsNodeClicked] = useState(false);
 
   const nodeHandler = () => {
     setIsNodeClicked(true);
@@ -34,7 +34,7 @@ const MessageNode = ({ id, data }: Props) => {
         <span className="text-green-600 font-bold text-lg"><FaWhatsappSquare /></span>
       </div>
 
-      {/* Message Content */}
+      {/* Text */}
       <div className="p-3 text-sm text-gray-800">
         {data?.text}
       </div>

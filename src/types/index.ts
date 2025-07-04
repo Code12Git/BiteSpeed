@@ -11,6 +11,7 @@ export interface NodeState {
     position?: { x: number; y: number };
     type?: string;
     data?: unknown;
+    text?:string;
   }
   
   export type NodeProps = {
