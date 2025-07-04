@@ -1,5 +1,5 @@
 import type { NodePayload } from "../../types";
-import { IS_NODE_CLICKED } from "../actionType/actionTypes";
+import { ADD_NODE, IS_NODE_CLICKED, UPDATE_NODE } from "../actionType/actionTypes";
 
 const nodeState = {
   nodesData: [
@@ -27,6 +27,30 @@ const nodesReducer = (
         nodesData: updatedNodes,
       };
     }
+
+    case ADD_NODE: {
+      const { payload } = action;
+      return {
+        ...state,
+        nodesData: [...state.nodesData, payload],
+      };
+    }
+
+    case UPDATE_NODE: {
+      const { text, id } = action.payload;
+      const updatedNodes = state.nodesData.map((node) =>
+        node.id === id
+          ? { ...node, data: { ...node.data, text } }
+          : node
+      );
+      return {
+        ...state,
+        nodesData: updatedNodes,
+        edgesData: [...state.edgesData], // keep edges unchanged
+      };
+    }
+    
+    
 
     default:
       return state;

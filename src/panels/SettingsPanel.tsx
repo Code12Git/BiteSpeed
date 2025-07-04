@@ -1,20 +1,27 @@
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import type { NodeProps } from '../types';
+import type { NodeProps } from '@xyflow/react';
 import { BsArrowLeft } from 'react-icons/bs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const SettingsPanel = ({ node }: { node: NodeProps }) => {
+type SettingsProps = {
+  node: NodeProps & { data: { text: string } };
+  onMessageChange: (text: string,id:string) => void;
+  onSave: () => void;
+}
 
-  const [message,setMessage] = useState('')
+const SettingsPanel = ({ node, onMessageChange, onSave }: SettingsProps) => {
+  const [message, setMessage] = useState(node.data.text || '');
 
-  const onDragStart = (event: React.DragEvent, nodeType: string) => {
-    event.dataTransfer.setData('application/reactflow', nodeType);
-    event.dataTransfer.effectAllowed = 'move';
+  useEffect(() => {
+    setMessage(node?.data?.text || '');
+  }, [node]);
+  console.log(node)
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setMessage(newText);
+    onMessageChange(newText,node?.id); 
   };
-
-  console.log(message)
 
   return (
     <ResizableBox
@@ -27,35 +34,29 @@ const SettingsPanel = ({ node }: { node: NodeProps }) => {
       className="relative border-l border-gray-300 bg-white"
     >
       <div className="h-full overflow-y-auto flex flex-col">
-
-        {/* Header Section */}
-        <div className='flex items-center gap-4 p-4 border-b border-gray-400 '>
+        <div className='flex items-center gap-4 p-4 border-b border-gray-400'>
           <button className="text-gray-600 hover:text-gray-900">
             <BsArrowLeft size={18} />
           </button>
           <h2 className="text-lg font-semibold text-gray-800">Message</h2>
         </div>
   
-        {/* Content Section */}
         <div className="p-4 flex-1">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Text</h3>
-            <textarea onChange={(e)=>setMessage(e.target.value)} className="p-3 bg-gray-50 rounded border border-gray-200 w-full text-gray-800">
-              {node?.data?.text || "Type your message here..."}
-            </textarea>
+            <textarea 
+              value={message}
+              onChange={handleTextChange}
+              className="p-3 bg-gray-50 rounded border border-gray-200 w-full text-gray-800 min-h-[100px]"
+              placeholder="Type your message here..."
+            />
           </div>
-
-         
-        </div>
-
-        {/* Draggable Node */}
-        <div 
-          className="p-3 m-4 border border-gray-300 rounded-md bg-gray-50 flex items-center gap-2 cursor-move"
-          draggable
-          onDragStart={(event) => onDragStart(event, 'messageNode')}
-        >
-          <IoChatbubbleEllipsesOutline className="text-gray-600" />
-          <span className="text-sm text-gray-700">Send Message</span>
+          <button 
+            onClick={onSave}
+            className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Save Node
+          </button>
         </div>
       </div>
     </ResizableBox>

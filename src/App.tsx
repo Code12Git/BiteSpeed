@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ReactFlow, useNodesState, Controls, useEdgesState, addEdge, type Connection, type NodeTypes, type EdgeTypes, Background, useReactFlow } from '@xyflow/react';
+import { ReactFlow, useNodesState, Controls, useEdgesState, type Connection, type NodeTypes, type EdgeTypes, Background, useReactFlow, type NodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useAppSelector } from './hooks/hooks';
+import { useAppDispatch, useAppSelector } from './hooks/hooks';
 import MessagePanel from './panels/MessagePanel';
 import MessageNode from './node/MessageNode';
 import CustomEdge from './edges/customEdge';
 import SettingsPanel from './panels/SettingsPanel';
+import { nodeCreation,  updateNodeData } from './redux/action/nodeAction';
+import Navbar from './base/Navbar';
 
 const nodeTypes: NodeTypes = {
   messageNode: MessageNode
@@ -19,19 +21,29 @@ export default function App() {
   const { nodesData, edgesData } = useAppSelector(state => state.nodes);
   const [nodes, setNodes, onNodesChange] = useNodesState(nodesData);
   const [edges, setEdges, onEdgesChange] = useEdgesState(edgesData);
-  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-
+  const [selectedNode, setSelectedNode] = useState<NodeProps | null>(null);
+  const dispatch = useAppDispatch();
   const reactFlowInstance = useReactFlow();
+
+  console.log(nodesData)
 
   useEffect(() => {
     setNodes(nodesData);
     setEdges(edgesData);
-  }, [nodesData, setNodes, setEdges, edgesData]);
+  }, []); 
+  
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    (params: Connection) => {
+      const newEdge = { ...params, id: `e${params.source}-${params.target}`, type: 'customEdge' };
+      setEdges((eds) => {
+        const updated = [...eds, newEdge];
+        return updated;
+      });
+    },
+    [setEdges]
   );
+  
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -55,41 +67,55 @@ export default function App() {
         type,
         position,
         data: { text: `textNode` },
+        isClicked: false
       };
-
+      console.log(newNode)
       setNodes((nds) => nds.concat(newNode));
+      dispatch(nodeCreation(newNode))
     },
     [reactFlowInstance, setNodes]
   );
-  
+
   const onNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (event: React.MouseEvent, node: NodeProps) => {
       setSelectedNode(node);
     },
     []
   );
 
+  const onSavedflow = () => {
+    if (selectedNode) {
+      const id = selectedNode.id;
+      const text = selectedNode.data?.text || "Default";
+      dispatch(updateNodeData(text, id));
+    }
+  };
+  console.log(selectedNode?.data)
+  
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <div style={{ flex: 1, background: 'white' }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-          onNodeClick={onNodeClick}
-        >
-          <Background />
-          <Controls />
-        </ReactFlow>
+    <>
+      <Navbar onSaveFlow={onSavedflow}  />
+      <div style={{ display: 'flex', height: '80vh' }}>
+        <div style={{ flex: 1, background: 'white' }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onNodeClick={onNodeClick}
+          >
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </div>
+        {selectedNode ? <SettingsPanel node={selectedNode} onMessageChange={onSavedflow} /> : <MessagePanel />}
       </div>
-      {selectedNode ? <SettingsPanel node={selectedNode} /> : <MessagePanel />}
-    </div>
+    </>
   );
 }
